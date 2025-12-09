@@ -1,0 +1,43 @@
+my-bookstore/
+├── .env                    # Variáveis de ambiente (DATABASE_URL, NEXTAUTH_SECRET)
+├── prisma/
+│   └── schema.prisma       # Definição do Banco (User, Book)
+├── public/                 # Imagens estáticas
+├── src/
+│   ├── actions/
+│   │   └── book-actions.ts # [BACKEND] Server Actions (addBook, deleteBook)
+│   │
+│   ├── app/
+│   │   ├── (auth)/         # Rotas de Autenticação
+│   │   │   ├── login/
+│   │   │   │   └── page.tsx
+│   │   │   └── signup/
+│   │   │       └── page.tsx
+│   │   ├── api/            # Rotas de API (para NextAuth)
+│   │   │   └── auth/
+│   │   │       └── [...nextauth]/
+│   │   │           └── route.ts
+│   │   ├── globals.css     # CSS Global (Tailwind imports)
+│   │   ├── layout.tsx      # Layout Principal (HTML, Body, Navbar)
+│   │   └── page.tsx        # [SERVER] Página Home (Busca dados e chama BookListClient)
+│   │
+│   ├── components/         # [FRONTEND] Componentes de UI
+│   │   ├── BookCard.tsx       # <--- NOVO: Exibe UM livro (Visual + Botão Delete)
+│   │   ├── BookFormModal.tsx  # <--- NOVO: Modal com Formulário (Lógica de Add)
+│   │   ├── BookListClient.tsx # <--- ATUALIZADO: Gerencia a lista e o estado do modal
+│   │   └── Navbar.tsx         # Botão de Login/Logout
+│   │
+│   └── lib/
+│       ├── auth.ts         # Configuração do NextAuth (Providers, Callbacks)
+│       └── db.ts           # Instância única do Prisma Client
+│
+├── tailwind.config.ts      # Configuração do Tailwind
+└── tsconfig.json           # Configuração do TypeScript
+
+
+
+# Conexão com o MySQL
+DATABASE_URL="mysql://root:1234@localhost:3306/livrariaDB"
+
+# Chave secreta para criptografar os cookies de login
+NEXTAUTH_SECRET="YHyvcgWG9TMo8CsIcHOtVbqY0ZRMfypy9x8SSxppzVX"
