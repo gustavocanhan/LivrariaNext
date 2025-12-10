@@ -1,5 +1,5 @@
 // Importa o PrismaClient, que é a classe usada para acessar o banco de dados
-import { PrismaClient } from "@prisma/client/";
+import { PrismaClient } from "@prisma/client";
 
 // Aqui criamos um tipo para permitir armazenar a instância do PrismaClient no objeto global
 // Isso evita criar múltiplas conexões quando o Next.js recarrega o código durante o desenvolvimento
