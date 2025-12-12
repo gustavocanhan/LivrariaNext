@@ -6,11 +6,7 @@ export async function POST(req: Request) {
   try {
     // Lê o corpo da requisição
     const body = await req.json();
-    const { name, email, password } = body;catch(error){
-    return NextResponse.json(
-        { message: "Erro interno no servidor"},
-        { status: 500 }
-    );
+    const { name, email, password } = body;
 
     // validacao simples
     if (!name || !email || !password) {

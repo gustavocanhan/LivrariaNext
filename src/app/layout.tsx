@@ -1,4 +1,9 @@
+import { ThemeProvider } from "next-themes";
+import "./globals.css";
+
 import type { Metadata } from "next";
+import ThemeToggle from "./../components/theme/ThemeToggle";
+import { ThemeProviderWrapper } from "@/components/theme/ThemeProviderWrapper";
 
 export const metadata: Metadata = {
   title: "Livraria",
@@ -12,7 +17,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ThemeProviderWrapper>
+          <ThemeToggle />
+          {children}
+        </ThemeProviderWrapper>
+      </body>
     </html>
   );
 }

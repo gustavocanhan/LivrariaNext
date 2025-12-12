@@ -1,6 +1,6 @@
 // Importa o PrismaClient, que é a classe usada para acessar o banco de dados
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
-import { PrismaClient } from "@prisma/client/";
+import { PrismaClient } from "@prisma/client";
 
 const adapter = new PrismaMariaDb(process.env.DATABASE_URL!);
 

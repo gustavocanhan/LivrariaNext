@@ -44,7 +44,7 @@ export const authOptions: NextAuthOptions = {
   */
   providers: [
     Credentials({
-      name: "Credenciais",
+      name: "credentials",
 
       /*
         Define os campos esperados no formulário de login.
@@ -144,8 +144,11 @@ export const authOptions: NextAuthOptions = {
     maxAge define o tempo de validade da sessão.
   */
   session: {
-    strategy: "database",
-    maxAge: 30 * 24 * 60 * 60, // 30 dias
+    strategy: "jwt",
+  },
+
+  pages: {
+    signIn: "/login",
   },
 
   /*
