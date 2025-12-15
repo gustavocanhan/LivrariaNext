@@ -67,7 +67,7 @@ export default function LoginForm() {
         <p className="text-center text-sm mt-4">
           SingUp?{" "}
           <a href="/signup" className="text-blue-600 hover:underline">
-            Criar conta
+            Create account
           </a>
         </p>
       </AuthCard>

@@ -9,6 +9,8 @@ import AuthTitle from "@/components/auth/AuthTitle";
 import AuthInput from "@/components/auth/AuthInput";
 import AuthSubmitButton from "@/components/auth/AuthSubmitButton";
 
+import ValidarEmail from "@/validation/ValidarEmail";
+
 export default function SignUpPage() {
   const router = useRouter();
 
@@ -23,7 +25,13 @@ export default function SignUpPage() {
     e.preventDefault();
 
     setLoading(true);
-    setEmail("");
+    setError("");
+
+    if (ValidarEmail(email) == false) {
+      setError("Digite um e-mail válido");
+      setLoading(false);
+      return;
+    }
 
     const res = await fetch("/api/signup", {
       method: "POST",
@@ -56,7 +64,7 @@ export default function SignUpPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-4">
+    <main className="min-h-[calc(100vh_-_40px)] flex items-center justify-center px-4">
       <AuthCard>
         <AuthTitle>Create Account</AuthTitle>
 
@@ -82,9 +90,9 @@ export default function SignUpPage() {
           <AuthSubmitButton loading={loading}>Create</AuthSubmitButton>
         </form>
         <p className="text-center text-sm mt-4">
-          Já possui conta?{" "}
+          Do you already have an account?{" "}
           <a href="/login" className="text-blue-600 hover:underline">
-            Entrar
+            Login
           </a>
         </p>
       </AuthCard>
