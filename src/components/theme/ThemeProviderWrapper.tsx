@@ -8,5 +8,9 @@ interface Props {
 }
 
 export function ThemeProviderWrapper({ children }: Props) {
-  return <ThemeProvider attribute="class">{children}</ThemeProvider>;
+  return (
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      {children}
+    </ThemeProvider>
+  );
 }

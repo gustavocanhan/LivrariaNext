@@ -9,11 +9,13 @@ import AuthTitle from "@/components/auth/AuthTitle";
 import AuthInput from "@/components/auth/AuthInput";
 import AuthSubmitButton from "@/components/auth/AuthSubmitButton";
 
-export default function LoginForm() {
+export default function SignUpPage() {
   const router = useRouter();
 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -21,9 +23,24 @@ export default function LoginForm() {
     e.preventDefault();
 
     setLoading(true);
-    setError("");
+    setEmail("");
 
-    const res = await signIn("credentials", {
+    const res = await fetch("/api/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    const json = await res.json();
+
+    if (!res.ok) {
+      setError(json.message || "Erro ao criar conta");
+      setLoading(false);
+      return;
+    }
+
+    // Login automático após o cadastro
+    const login = await signIn("credentials", {
       redirect: false,
       email,
       password,
@@ -31,23 +48,24 @@ export default function LoginForm() {
 
     setLoading(false);
 
-    if (res?.error) {
-      setError("E-mail ou senha inválidos");
-      return;
+    if (login?.error) {
+      router.push("/login");
     }
 
     router.push("/");
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-4 bg-white dark:bg-gray-900">
+    <main className="min-h-screen flex items-center justify-center px-4">
       <AuthCard>
-        <AuthTitle>Login</AuthTitle>
+        <AuthTitle>Create Account</AuthTitle>
 
         <form onSubmit={handleSubmit}>
+          <AuthInput label="Name" type="text" value={name} onChange={setName} />
+
           <AuthInput
             label="E-mail"
-            type="text"
+            type="email"
             value={email}
             onChange={setEmail}
           />
@@ -61,13 +79,12 @@ export default function LoginForm() {
 
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
-          <AuthSubmitButton loading={loading}>login</AuthSubmitButton>
+          <AuthSubmitButton loading={loading}>Create</AuthSubmitButton>
         </form>
-
         <p className="text-center text-sm mt-4">
-          SingUp?{" "}
-          <a href="/signup" className="text-blue-600 hover:underline">
-            Criar conta
+          Já possui conta?{" "}
+          <a href="/login" className="text-blue-600 hover:underline">
+            Entrar
           </a>
         </p>
       </AuthCard>
