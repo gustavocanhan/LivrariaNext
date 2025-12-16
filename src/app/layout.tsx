@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="pt-BR" suppressHydrationWarning>
       <body>
         <ThemeProviderWrapper>
-          <ThemeToggle />
+          {/* <ThemeToggle /> */}
           {children}
         </ThemeProviderWrapper>
       </body>

@@ -1,4 +1,3 @@
-import LogoutButton from "@/components/logout/LogoutButton";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -11,9 +10,8 @@ export default async function Home() {
   }
 
   return (
-    <main className="w-full h-screen">
-      <h1>Livraria</h1>
-      <LogoutButton />
+    <main className="w-full h-screen p-4">
+      <h1 className="text-2xl">Dashboard</h1>
     </main>
   );
 }
