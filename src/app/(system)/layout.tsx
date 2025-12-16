@@ -1,5 +1,4 @@
-import ThemeToggle from "@/components/theme/ThemeToggle";
-import { ThemeProviderWrapper } from "@/components/theme/ThemeProviderWrapper";
+import { Providers } from "@/components/providers/Providers";
 import Sidebar from "@/components/sidebar/Sidebar";
 
 export default function SystemLayout({
@@ -9,12 +8,10 @@ export default function SystemLayout({
 }) {
   return (
     <div className="flex h-screen overflow-hidden">
-      <ThemeProviderWrapper>
-        {/* <ThemeToggle /> */}
+      <Providers>
         <Sidebar />
-
         {children}
-      </ThemeProviderWrapper>
+      </Providers>
     </div>
   );
 }

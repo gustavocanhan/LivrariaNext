@@ -1,22 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  LogOut,
-  Settings,
-  CircleUser,
-} from "lucide-react";
-import Image from "next/image";
+import { ChevronLeft, ChevronRight, Settings, CircleUser } from "lucide-react";
 
 import SidebarItem from "./SidebarItem";
 import { sidebarItems } from "./sidebarData";
 import LogoutButton from "../logout/LogoutButton";
 import ThemeToggle from "../theme/ThemeToggle";
+import { useSession } from "next-auth/react";
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
+
+  const { data: session, status } = useSession();
 
   return (
     <aside
@@ -55,9 +51,9 @@ export default function Sidebar() {
 
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="text-sm font-medium">Gustavo</span>
+              <span className="text-sm font-medium">{session?.user.name}</span>
               <span className="text-xs text-muted-foreground">
-                gustavocanhan@gmail.com
+                {session?.user.email}
               </span>
             </div>
           )}
