@@ -50,3 +50,22 @@ export async function updateBook(
     },
   });
 }
+
+// Deletar Livro
+// Apenas usuários com permissão de 'admin'
+export async function deleteBook(bookId: string) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    throw new Error("Usuário não autenticado");
+  }
+
+  if (session.user.role !== "admin") {
+    throw new Error("Apenas administradores podem deletar livros");
+  }
+
+  // Exclui o livro
+  await prisma.book.delete({
+    where: { id: bookId },
+  });
+}
