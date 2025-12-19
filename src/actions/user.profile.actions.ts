@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import bcrypt from "bcryptjs";
+import { th } from "zod/locales";
 
 // Editar Nome do Usuário
 // Usuário só pode editar seu próprio perfil
@@ -37,30 +38,28 @@ export default async function updateUserProfile(userId: string, name: string) {
 export async function updateUserPassword(
   userId: string,
   currentUserPassword: string,
-  confirmNewPassword: string,
-  newPassword: string
+  newPassword: string,
+  confirmNewPassword: string
 ) {
   const session = await getServerSession(authOptions);
 
+  // 1. Autenticação
   if (!session) {
     throw new Error("Usuário não autenticado");
   }
 
+  // 2. Autorização
   if (session.user.id !== userId) {
     throw new Error("Você só pode alterar sua própria senha");
   }
 
+  // 3. Validações simples
   if (
     currentUserPassword.trim().length === 0 ||
-    newPassword.trim().length === 0
+    newPassword.trim().length === 0 ||
+    confirmNewPassword.trim().length === 0
   ) {
     throw new Error("As senhas não podem ser vazias");
-  }
-
-  if (currentUserPassword.trim() === newPassword.trim()) {
-    throw new Error(
-      "A nova senha não pode ser igual à uma senha utilizada anteriormente"
-    );
   }
 
   if (newPassword.trim() !== confirmNewPassword.trim()) {
@@ -71,6 +70,30 @@ export async function updateUserPassword(
     throw new Error("A nova senha deve ter no mínimo 4 caracteres");
   }
 
+  if (currentUserPassword.trim() === newPassword.trim()) {
+    throw new Error("A nova senha não pode ser igual à senha atual");
+  }
+
+  // 4. Banco
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user || !user.password) {
+    throw new Error("Usuário inválido");
+  }
+
+  // 5. Validação com hash
+  const passwordMatch = await bcrypt.compare(
+    currentUserPassword.trim(),
+    user.password
+  );
+
+  if (!passwordMatch) {
+    throw new Error("A senha atual está incorreta");
+  }
+
+  // 6. Update
   const passwordHash = await bcrypt.hash(newPassword.trim(), 10);
 
   await prisma.user.update({
@@ -79,19 +102,76 @@ export async function updateUserPassword(
   });
 }
 
+// Editar E-mail do Usuário
+// Usuário só pode editar seu próprio e-mail
 export async function updateUserEmail(
   userId: string,
   currentUserEmail: string,
-  confirmNewEmail: string,
-  newEmail: string
+  newEmail: string,
+  confirmNewEmail: string
 ) {
+  // 1. Autenticação
   const session = await getServerSession(authOptions);
 
   if (!session) {
     throw new Error("Usuário não autenticado");
   }
 
+  // 2. Autorização
   if (session.user.id !== userId) {
     throw new Error("Você só pode alterar seu próprio email");
   }
+
+  // 3. Validações simples
+  if (
+    currentUserEmail.trim().length === 0 ||
+    newEmail.trim().length === 0 ||
+    confirmNewEmail.trim().length === 0
+  ) {
+    throw new Error("Os campos de email não podem ser vazios");
+  }
+
+  if (newEmail.trim() !== confirmNewEmail.trim()) {
+    throw new Error("O novo email e a confirmação de email não coincidem");
+  }
+
+  // 4. Formato básico
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(newEmail.trim())) {
+    throw new Error("Formato de email inválido");
+  }
+
+  // 5. Banco
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user || !user.email) {
+    throw new Error("Usuário inválido");
+  }
+
+  // 6. Confere se o email atual bate com o do banco
+  if (user.email !== currentUserEmail.trim()) {
+    throw new Error("O email atual informado está incorreto");
+  }
+
+  if (user.email === newEmail.trim()) {
+    throw new Error("O novo email não pode ser igual ao email atual");
+  }
+
+  // 7. Duplicidade
+  const emailAlreadyExists = await prisma.user.findUnique({
+    where: { email: newEmail.trim() },
+  });
+
+  if (emailAlreadyExists) {
+    throw new Error("O email informado já está em uso");
+  }
+
+  // 8. Update
+  await prisma.user.update({
+    where: { id: userId },
+    data: { email: newEmail.trim() },
+  });
 }
