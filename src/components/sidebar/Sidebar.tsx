@@ -39,9 +39,19 @@ export default function Sidebar() {
 
       {/* menu */}
       <nav className="flex flex-1 flex-col gap-4 px-1 pt-6">
-        {sidebarItems.map((item) => (
-          <SidebarItem key={item.href} {...item} collapsed={collapsed} />
-        ))}
+        {sidebarItems
+          .filter(
+            (item) =>
+              item.permission === "ALL" || session?.user.role === "ADMIN"
+          )
+          .map((item) => (
+            <SidebarItem
+              key={item.href}
+              {...item}
+              collapsed={collapsed}
+              label={item.label}
+            />
+          ))}
       </nav>
 
       {/* rodape */}
