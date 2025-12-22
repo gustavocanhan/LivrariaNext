@@ -7,7 +7,7 @@ export default function SystemLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen w-screen overflow-hidden">
       <Providers>
         <Sidebar />
         {children}

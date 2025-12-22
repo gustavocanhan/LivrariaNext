@@ -16,7 +16,7 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`flex h-screen flex-col border-r border-border bg-background transition-all duration-300 ${
+      className={`flex h-screen flex-shrink-0 flex-col border-r border-border transition-all duration-300 ${
         collapsed ? "w-16" : "w-64"
       }`}
     >

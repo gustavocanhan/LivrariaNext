@@ -4,11 +4,14 @@
 
 /* LIGHT THEME */
 :root {
-  --background: 0 0% 100%;
+  --background: 214 20% 96%;
   --foreground: 222.2 84% 4.9%;
 
   --card: 0 0% 100%;
   --card-foreground: 222.2 84% 4.9%;
+
+  --border: 220 14% 91%;
+  --icon: 214 32% 91%;
 
   --input: 0 0% 100%;
   --input-foreground: 222.2 84% 4.9%;
@@ -18,7 +21,7 @@
   --primary-foreground: 210 40% 98%;
 
   /* HOVER PADRÃO */
-  --hover: 220 14% 96%;
+  --hover: 220 14% 91%;
 }
 
 /* DARK THEME */

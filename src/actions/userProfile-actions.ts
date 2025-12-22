@@ -4,19 +4,38 @@ import { prisma } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import bcrypt from "bcryptjs";
-import { th } from "zod/locales";
 
-// Editar Nome do Usuário
-// Usuário só pode editar seu próprio perfil
-export default async function updateUserProfile(userId: string, name: string) {
+// Retornar dados do perfil do usuário
+export async function getUserProfile() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
     throw new Error("Usuário não autenticado");
   }
 
-  if (session.user.id !== userId) {
-    throw new Error("Você só pode editar seu próprio perfil");
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+    },
+  });
+
+  if (!user) {
+    throw new Error("Usuário não encontrado");
+  }
+
+  return user;
+}
+
+// Editar Nome do Usuário
+// Usuário só pode editar seu próprio perfil
+export default async function updateUserProfile(name: string) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    throw new Error("Usuário não autenticado");
   }
 
   if (name.trim().length === 0) {
@@ -28,7 +47,7 @@ export default async function updateUserProfile(userId: string, name: string) {
   }
 
   await prisma.user.update({
-    where: { id: userId },
+    where: { id: session.user.id },
     data: { name: name.trim() },
   });
 }
@@ -36,7 +55,6 @@ export default async function updateUserProfile(userId: string, name: string) {
 // Alterar Senha do Usuário
 // Usuário só pode alterar sua própria senha
 export async function updateUserPassword(
-  userId: string,
   currentUserPassword: string,
   newPassword: string,
   confirmNewPassword: string
@@ -46,11 +64,6 @@ export async function updateUserPassword(
   // 1. Autenticação
   if (!session) {
     throw new Error("Usuário não autenticado");
-  }
-
-  // 2. Autorização
-  if (session.user.id !== userId) {
-    throw new Error("Você só pode alterar sua própria senha");
   }
 
   // 3. Validações simples
@@ -76,7 +89,7 @@ export async function updateUserPassword(
 
   // 4. Banco
   const user = await prisma.user.findUnique({
-    where: { id: userId },
+    where: { id: session.user.id },
   });
 
   if (!user || !user.password) {
@@ -97,7 +110,7 @@ export async function updateUserPassword(
   const passwordHash = await bcrypt.hash(newPassword.trim(), 10);
 
   await prisma.user.update({
-    where: { id: userId },
+    where: { id: session.user.id },
     data: { password: passwordHash },
   });
 }
@@ -105,7 +118,6 @@ export async function updateUserPassword(
 // Editar E-mail do Usuário
 // Usuário só pode editar seu próprio e-mail
 export async function updateUserEmail(
-  userId: string,
   currentUserEmail: string,
   newEmail: string,
   confirmNewEmail: string
@@ -115,11 +127,6 @@ export async function updateUserEmail(
 
   if (!session) {
     throw new Error("Usuário não autenticado");
-  }
-
-  // 2. Autorização
-  if (session.user.id !== userId) {
-    throw new Error("Você só pode alterar seu próprio email");
   }
 
   // 3. Validações simples
@@ -144,7 +151,7 @@ export async function updateUserEmail(
 
   // 5. Banco
   const user = await prisma.user.findUnique({
-    where: { id: userId },
+    where: { id: session.user.id },
   });
 
   if (!user || !user.email) {
@@ -171,7 +178,7 @@ export async function updateUserEmail(
 
   // 8. Update
   await prisma.user.update({
-    where: { id: userId },
+    where: { id: session.user.id },
     data: { email: newEmail.trim() },
   });
 }

@@ -4,6 +4,63 @@ import { prisma } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
+// Retorna um usuário pelo ID
+// Para editar, subir os dados para a modal de edição
+export async function getUserById(userId: string) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    throw new Error("Usuário não autenticado");
+  }
+  if (session.user.role !== "ADMIN") {
+    throw new Error(
+      "Apenas administradores podem acessar os dados de outros usuários"
+    );
+  }
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, name: true, email: true, role: true, createdAt: true },
+  });
+
+  if (!user) {
+    throw new Error("Usuário não encontrado");
+  }
+
+  return user;
+}
+
+// Retornar lista de usuários
+export async function getUsersList() {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    throw new Error("Usuário não autenticado");
+  }
+
+  if (session.user.role !== "ADMIN") {
+    throw new Error("Apenas administradores podem acessar a lista de usuários");
+  }
+
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      createdAt: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  if (!users) {
+    throw new Error("Nenhum usuário encontrado");
+  }
+
+  return users;
+}
+
 // Editar Usuário
 // Apenas ADMIN pode editar outros usuários
 // ADMIN não pode editar outro ADMIN
