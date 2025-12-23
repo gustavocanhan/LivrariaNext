@@ -42,6 +42,7 @@ export async function getUsersList() {
   }
 
   const users = await prisma.user.findMany({
+    where: { id: { not: session.user.id } },
     select: {
       id: true,
       name: true,
@@ -74,11 +75,17 @@ export async function updateUsersProfile(
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    throw new Error("Usuário não autenticado");
+    throw new Error("Usuário não autenticado.");
   }
 
   if (session.user.role !== "ADMIN") {
-    throw new Error("Apenas administradores podem editar usuários");
+    throw new Error("Apenas administradores podem editar usuários.");
+  }
+
+  if (session.user.id === userId) {
+    throw new Error(
+      "Administradores só podem alterar seu nível de acesso em configurações do Perfil."
+    );
   }
 
   const currentUser = await prisma.user.findUnique({
@@ -86,11 +93,11 @@ export async function updateUsersProfile(
   });
 
   if (currentUser == null) {
-    throw new Error("Usuário não encontrado");
+    throw new Error("Usuário não encontrado.");
   }
 
   if (currentUser?.role === "ADMIN" && currentUser.id !== session.user.id) {
-    throw new Error("Não é possível editar outro usuário ADMIN");
+    throw new Error("Não é possível editar outro usuário ADMIN.");
   }
 
   await prisma.user.update({
@@ -109,15 +116,15 @@ export async function deleteUser(userId: string) {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    throw new Error("Usuário não autenticado");
+    throw new Error("Usuário não autenticado.");
   }
 
   if (session.user.role !== "ADMIN") {
-    throw new Error("Apenas administradores podem deletar usuários");
+    throw new Error("Apenas administradores podem deletar usuários.");
   }
 
   if (session.user.id === userId) {
-    throw new Error("Administradores não podem deletar a si mesmos");
+    throw new Error("Administradores não podem deletar a si mesmos.");
   }
 
   const currentUser = await prisma.user.findUnique({
@@ -125,11 +132,11 @@ export async function deleteUser(userId: string) {
   });
 
   if (currentUser == null) {
-    throw new Error("Usuário não encontrado");
+    throw new Error("Usuário não encontrado.");
   }
 
   if (currentUser?.role === "ADMIN") {
-    throw new Error("Não é possível deletar outro usuário ADMIN");
+    throw new Error("Não é possível deletar outro usuário ADMIN.");
   }
 
   await prisma.user.delete({

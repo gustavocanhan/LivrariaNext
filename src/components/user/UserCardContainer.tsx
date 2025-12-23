@@ -9,6 +9,7 @@ import {
 import UserCard, { User } from "./UserCard";
 import EditUserModal from "./EditUserModal";
 import ModalAviso from "../modal/ModalAviso";
+import UserSearch from "./UserSearch";
 
 export default function UserCardContainer() {
   const [users, setUsers] = useState<User[]>([]);
@@ -18,6 +19,8 @@ export default function UserCardContainer() {
   const [isWarningModalOpen, setWarningModalOpen] = useState(false);
 
   const [selectUser, setSelectUser] = useState<User | null>(null);
+
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     async function loadUsers() {
@@ -66,10 +69,19 @@ export default function UserCardContainer() {
     }
   }
 
+  const filteredUsers = users.filter(
+    (user) =>
+      user.name?.toLowerCase().includes(search.toLowerCase()) ||
+      user.email?.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {users.map((user) => (
+      <div>
+        <UserSearch value={search} onChange={setSearch} />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {filteredUsers.map((user) => (
           <UserCard
             key={user.id}
             user={user}

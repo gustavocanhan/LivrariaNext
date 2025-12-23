@@ -8,15 +8,9 @@ export const sidebarItems = [
     permission: "ALL",
   },
   {
-    label: "Listar",
-    href: "/books",
+    label: "Livros",
+    href: "/livros",
     icon: BookOpen,
-    permission: "ALL",
-  },
-  {
-    label: "Cadastrar",
-    href: "/books/new",
-    icon: Plus,
     permission: "ALL",
   },
   {
