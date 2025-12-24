@@ -10,6 +10,8 @@ import UserCard, { User } from "./UserCard";
 import EditUserModal from "./EditUserModal";
 import ModalAviso from "../modal/ModalAviso";
 import UserSearch from "./UserSearch";
+import EmptyState from "../empty-state/EmptyState";
+import UserRoleFilter from "../filter/UserRoleFilter";
 
 export default function UserCardContainer() {
   const [users, setUsers] = useState<User[]>([]);
@@ -21,6 +23,8 @@ export default function UserCardContainer() {
   const [selectUser, setSelectUser] = useState<User | null>(null);
 
   const [search, setSearch] = useState("");
+
+  const [roleFilter, setRoleFilter] = useState<"ALL" | "USER" | "ADMIN">("ALL");
 
   useEffect(() => {
     async function loadUsers() {
@@ -69,15 +73,20 @@ export default function UserCardContainer() {
     }
   }
 
-  const filteredUsers = users.filter(
-    (user) =>
+  const filteredUsers = users.filter((user) => {
+    const matchSearch =
       user.name?.toLowerCase().includes(search.toLowerCase()) ||
-      user.email?.toLowerCase().includes(search.toLowerCase())
-  );
+      user.email?.toLowerCase().includes(search.toLowerCase());
+
+    const matchRole = roleFilter === "ALL" || user.role === roleFilter;
+
+    return matchSearch && matchRole;
+  });
 
   return (
     <>
-      <div>
+      <div className="flex gap-4">
+        <UserRoleFilter value={roleFilter} onChange={setRoleFilter} />
         <UserSearch value={search} onChange={setSearch} />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -110,6 +119,13 @@ export default function UserCardContainer() {
         }}
         erro={error}
       />
+
+      {search.length > 1 && filteredUsers.length === 0 && (
+        <EmptyState
+          title="Nenhum usuário encontrado"
+          description="Tente buscar por nome ou e-mail"
+        />
+      )}
     </>
   );
 }
