@@ -1,3 +1,4 @@
+import ContainerTableBook from "@/components/list-books/ContainerTableBook";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -12,6 +13,7 @@ export default async function Livro() {
   return (
     <main className="flex-1 h-screen overflow-hidden p-4 gap-4 flex flex-col">
       <h1 className="text-2xl">Livros</h1>
+      <ContainerTableBook />
     </main>
   );
 }

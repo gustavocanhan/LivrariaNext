@@ -6,44 +6,63 @@ interface TableBookProps {
     title: string;
     author: string;
     price: number;
-    createdat: string;
+    description: string;
+    createdAt: Date;
   };
   editBook: (book: any) => void;
   deleteBook: (id: string) => void;
+  permission?: "ADMIN" | "USER";
 }
 
 export default function TableBook({
   book,
   editBook,
   deleteBook,
+  permission,
 }: TableBookProps) {
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Author</th>
-          <th>Price</th>
-          <th>Created At</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr key={book.id}>
-          <td>{book.title}</td>
-          <td>{book.author}</td>
-          <td>{book.price}</td>
-          <td>{book.createdat}</td>
-          <td>
-            <button onClick={() => editBook(book)}>
-              <SquarePen />
+    <tr
+      className="border-t border-[hsl(var(--input-border))]
+                   hover:bg-[hsl(var(--hover))]
+                   transition-colors"
+    >
+      <td className="px-4 py-3">{book.title}</td>
+      <td className="px-4 py-3">{book.author}</td>
+      <td className="px-4 py-3">R$ {book.price.toFixed(2)}</td>
+      <td className="px-4 py-3">{book.description}</td>
+      <td className="px-4 py-3">
+        {new Date(book.createdAt).toLocaleDateString("pt-BR")}
+      </td>
+
+      <td className="px-4 py-3">
+        <div className="flex justify-center gap-2">
+          <button
+            onClick={() => editBook(book)}
+            className="rounded-md p-2
+                       text-[hsl(var(--foreground))]
+                       hover:bg-[hsl(var(--primary))]
+                       hover:text-[hsl(var(--primary-foreground))]
+                       transition-colors"
+            title="Editar"
+          >
+            <SquarePen size={18} />
+          </button>
+
+          {permission === "ADMIN" && (
+            <button
+              onClick={() => deleteBook(book.id)}
+              className="rounded-md p-2
+                         text-red-600
+                         hover:bg-red-600
+                         hover:text-white
+                         transition-colors"
+              title="Excluir"
+            >
+              <Trash size={18} />
             </button>
-            <button onClick={() => deleteBook(book.id)}>
-              <Trash />
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          )}
+        </div>
+      </td>
+    </tr>
   );
 }

@@ -8,7 +8,7 @@ import {
 import CardUser from "./CardUser";
 import { useEffect, useState } from "react";
 import ModalAviso from "@/components/modal/ModalAviso";
-import ModalEditar from "../modal/ModalEditar";
+import ModalEditarUser from "../modal/ModalEditarUser";
 
 type UserRole = "ADMIN" | "USER";
 
@@ -80,7 +80,7 @@ export default function ContainerCardUser() {
         erro={error}
       />
 
-      <ModalEditar
+      <ModalEditarUser
         handleSubmit={handleSubmit}
         onChangeName={setName}
         onChangeRole={setRole}

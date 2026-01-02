@@ -1,38 +1,47 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import ModalLayout from "./ModalLayout";
 
 type ModalEditarProps = {
   handleSubmit: (e: React.FormEvent) => void;
-  onChangeName: (value: string) => void;
-  onChangeRole: (value: UserRole) => void;
+  onChangeTitle: (value: string) => void;
+  onChangeAuthor: (value: string) => void;
+  onChangePrice: (value: string) => void;
+  onChangeDescription: (value: string) => void;
   isOpen: boolean;
   onClose: () => void;
-  user: { id: string; name: string; email: string; role: string };
+  title: string;
+  author: string;
+  price: string;
+  description: string;
 };
 
-type UserRole = "ADMIN" | "USER";
-
-export default function ModalEditar({
+export default function ModalAdicionarBook({
   handleSubmit,
-  onChangeName,
-  onChangeRole,
+  onChangeTitle,
+  onChangeAuthor,
+  onChangePrice,
+  onChangeDescription,
   isOpen,
   onClose,
-  user,
+  title,
+  author,
+  price,
+  description,
 }: ModalEditarProps) {
   if (!isOpen) return null;
+
   return (
-    <ModalLayout titulo="Editar Usuário" onClose={onClose}>
+    <ModalLayout titulo="Cadastrar Livro" onClose={onClose}>
       <form onSubmit={handleSubmit}>
+        {/* Titulo */}
         <div className="mb-4">
           <label className="block mb-1 text-sm font-medium text-[hsl(var(--foreground))]">
-            Nome:
+            Título:
           </label>
           <input
-            value={user.name}
-            onChange={(e) => onChangeName(e.target.value)}
+            value={title}
+            onChange={(e) => onChangeTitle(e.target.value)}
             type="text"
             className="
           w-full px-3 py-2 rounded-md
@@ -45,14 +54,15 @@ export default function ModalEditar({
           />
         </div>
 
+        {/* Autor */}
         <div className="mb-4">
           <label className="block mb-1 text-sm font-medium text-[hsl(var(--foreground))]">
-            E-mail:
+            Autor/Autora:
           </label>
           <input
-            disabled
+            value={author}
+            onChange={(e) => onChangeAuthor(e.target.value)}
             type="text"
-            value={user.email}
             className="
           w-full px-3 py-2 rounded-md
           bg-[hsl(var(--input))]
@@ -64,13 +74,15 @@ export default function ModalEditar({
           />
         </div>
 
+        {/* Preço */}
         <div className="mb-4">
           <label className="block mb-1 text-sm font-medium text-[hsl(var(--foreground))]">
-            Permissão
+            Preço:
           </label>
-          <select
-            onChange={(e) => onChangeRole(e.target.value as UserRole)}
-            name="role"
+          <input
+            value={price}
+            onChange={(e) => onChangePrice(e.target.value)}
+            type="text"
             className="
           w-full px-3 py-2 rounded-md
           bg-[hsl(var(--input))]
@@ -79,14 +91,28 @@ export default function ModalEditar({
           focus:outline-none
           focus:ring-2 focus:ring-[hsl(var(--primary))]
         "
-          >
-            <option value={user.role}>{user.role}</option>
-            {user.role === "ADMIN" ? (
-              <option value="USER">USER</option>
-            ) : (
-              <option value="ADMIN">ADMIN</option>
-            )}
-          </select>
+          />
+        </div>
+
+        {/* Descricao */}
+        <div className="mb-4">
+          <label className="block mb-1 text-sm font-medium text-[hsl(var(--foreground))]">
+            Descrição:
+          </label>
+          <textarea
+            value={description || ""}
+            onChange={(e) => onChangeDescription(e.target.value)}
+            placeholder="Descrição do livro"
+            className="
+        w-full min-h-[120px] resize-none
+        px-3 py-2 rounded-md
+        bg-[hsl(var(--input))]
+        text-[hsl(var(--input-foreground))]
+        border border-[hsl(var(--input-border))]
+        focus:outline-none focus:ring-2
+        focus:ring-[hsl(var(--primary))]
+      "
+          />
         </div>
         <div className="pt-4 pb-2 flex justify-end">
           <button

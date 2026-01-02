@@ -1,4 +1,4 @@
-import ContainerCardUser from "@/components/list-users/ContainerCardUser";
+import ContainerDashboard from "@/components/dashboard/ContainerDashboard";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -13,8 +13,7 @@ export default async function Home() {
   return (
     <main className="flex-1 h-screen overflow-hidden p-4 gap-4 flex flex-col">
       <h1 className="text-2xl">Dashboard</h1>
-
-      <div className="w-full h-30 bg-red-200 p-5">aaa</div>
+      <ContainerDashboard />
     </main>
   );
 }

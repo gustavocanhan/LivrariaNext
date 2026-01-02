@@ -4,6 +4,22 @@ import { prisma } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
+export async function getLengthUsers() {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    throw new Error("Usuário não autenticado.");
+  }
+
+  const data = await prisma.user.findMany();
+
+  if (!data) {
+    throw new Error("Nenhum usuário encontrado.");
+  }
+
+  return data.length;
+}
+
 // Retorna um usuário pelo ID
 // Para editar, subir os dados para a modal de edição
 export async function getUserById(userId: string) {
@@ -14,7 +30,7 @@ export async function getUserById(userId: string) {
   }
   if (session.user.role !== "ADMIN") {
     throw new Error(
-      "Apenas administradores podem acessar os dados de outros usuários"
+      "Apenas administradores podem acessar os dados de outros usuários."
     );
   }
   const user = await prisma.user.findUnique({
@@ -23,7 +39,7 @@ export async function getUserById(userId: string) {
   });
 
   if (!user) {
-    throw new Error("Usuário não encontrado");
+    throw new Error("Usuário não encontrado.");
   }
 
   return user;
@@ -34,11 +50,13 @@ export async function getUsersList() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    throw new Error("Usuário não autenticado");
+    throw new Error("Usuário não autenticado.");
   }
 
   if (session.user.role !== "ADMIN") {
-    throw new Error("Apenas administradores podem acessar a lista de usuários");
+    throw new Error(
+      "Apenas administradores podem acessar a lista de usuários."
+    );
   }
 
   const users = await prisma.user.findMany({
@@ -56,7 +74,7 @@ export async function getUsersList() {
   });
 
   if (!users) {
-    throw new Error("Nenhum usuário encontrado");
+    throw new Error("Nenhum usuário encontrado.");
   }
 
   return users;
